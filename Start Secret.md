@@ -51,4 +51,42 @@ vault kv put
  ~~~
 <img width="455" alt="스크린샷 2019-08-05 오후 4 37 40" src="https://user-images.githubusercontent.com/37536415/62447044-6002f380-b79f-11e9-9bef-4e87e59e65c4.png">
 
->> **Vault는 저장소에서 데이터를 가져 와서 해독**
+> **Vault는 저장소에서 데이터를 가져 와서 해독**
+
++ 추가 정보 제공
+secret 엔진은 다른 시스템에 대한 시간제한 접근을 허용하는 비밀에 대한 lease를 생성하며, 
+lease_id는 식별자를 포함하며 리스가 유효한 기간(초)을 포함
+
+******
+
+## json query를 사용하여, 비밀 값 추출 예제
+
+~~~
+vault kv get -field=excited secret/hello
+~~~
+> 결과 : <img width="552" alt="스크린샷 2019-08-05 오후 4 45 00" src="https://user-images.githubusercontent.com/37536415/62447496-778eac00-b7a0-11e9-920e-d2a705a456c9.png">
+
+~~~
+vault kv get -format=json secret/hello
+~~~
+> 결과 : <img width="538" alt="스크린샷 2019-08-05 오후 4 45 07" src="https://user-images.githubusercontent.com/37536415/62447497-78274280-b7a0-11e9-912e-1c642a6d292d.png">
+
+
+*****
+
+## 아까 저장한 내용 지우기 
+
+~~~
+vault kv delete secret/hello
+~~~
+
+<img width="520" alt="스크린샷 2019-08-05 오후 4 46 27" src="https://user-images.githubusercontent.com/37536415/62447539-95f4a780-b7a0-11e9-9608-0dad427d25fc.png">
+
+다시 get으로 확인해보면, 삭제된 것을 확인할 수 있음
++ created, deletion time을 확인 할 수 있음
+
+<img width="444" alt="스크린샷 2019-08-05 오후 4 47 11" src="https://user-images.githubusercontent.com/37536415/62447662-d48a6200-b7a0-11e9-9ca5-009f515c7306.png">
+
+
+
+
