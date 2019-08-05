@@ -47,21 +47,56 @@ vault write aws/config/root \
 
 
 
+********
+
+
+## Create a Role
+
+Vault에서 액세스 키를 생성하면이 정책이 자동으로 첨부됩니다.
+생성 된 액세스 키는 IAM 또는 다른 AWS 서비스가 아닌 EC2에 대한 전체 액세스 권한을 갖습니다. 
+
+**aws / roles / : name이라는 특수 경로를 사용하여 Vault에 IAM 정책을 작성**
+
+1. 
+~~~
+vault write aws/roles/my-role credential_type=iam_user policy_document=-<<EOF
+~~~
+
+2. 
+~~~
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1426528957000",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:*"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
+}
+~~~
+
+3. 
+~~~
+EOF
+~~~
+
+<img width="569" alt="스크린샷 2019-08-05 오후 5 43 24" src="https://user-images.githubusercontent.com/37536415/62451152-a6108500-b7a8-11e9-93c6-5df5874f3b17.png">
 
 
 
+******
 
 
+## secret 생성하기 
 
-
-
-
-
-
-
-
-
-
+이제 AWS 비밀 엔진이 활성화되고 역할이 구성되었으므로
+aws / creds / : name에서 읽음으로써 Vault에 해당 역할에 대한 액세스 키 쌍을 생성하도록 요청할 수 있다.
 
 
 
