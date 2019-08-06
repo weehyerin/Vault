@@ -17,8 +17,9 @@ REST API를 통해 Vault에 액세스할 때. (예를 들어 시스템에서 App
 
 
 
-1. vi config.hcl 명령어. 내부의 기존 값들 지우고 아래 명령어 실행
+1. `vi config.hcl`.  명령어. 내부의 기존 값들 지우고 아래 명령어 실행
 
+~~~
 backend "file" {
   path = "vault"
 }
@@ -26,11 +27,37 @@ backend "file" {
 listener "tcp" {
   tls_disable = 1
 }
+~~~
+
+2. 
+~~~
+vault server -config=config.hcl
+~~~
+
+`Error initializing listener of type tcp: listen tcp 127.0.0.1:8200: bind: address already in use` <br> 이런 에러가 뜬다면, 기존 서버으 실행을 중지
+
+결과 : <img width="567" alt="스크린샷 2019-08-06 오후 3 49 26" src="https://user-images.githubusercontent.com/37536415/62517186-ca7c6800-b861-11e9-946a-a39ae2d62de2.png">
 
 
+3. 이제 우리는 우리의 모든 상호작용에 Vault의 API를 사용할 수 있다. 예를 들어 다음과 같이 Vault를 초기화할 수 있다.
+> <다른 terminal 창>
+~~~
+curl \
+    --request POST \
+    --data '{"secret_shares": 1, "secret_threshold": 1}' \
+    http://127.0.0.1:8200/v1/sys/init | jq
+~~~
 
+- mac에 jq가 설치 되어있지 않아서 
+<img width="565" alt="스크린샷 2019-08-06 오후 3 51 53" src="https://user-images.githubusercontent.com/37536415/62517412-542c3580-b862-11e9-8e80-42f01d1fd9da.png">
 
+아래와 같은 에러가 발생했다. 
 
+`brew install jq` 한 후 다시 시행해보니 아래와 같은 사진이 나왔다. 
+
+<img width="569" alt="스크린샷 2019-08-06 오후 3 53 09" src="https://user-images.githubusercontent.com/37536415/62517414-542c3580-b862-11e9-9119-d16be8696e0c.png">
+
+아마 위의 과정에서 이미 init이 시행된 것 같다. root token을 알아내야 하므로 다시 terminal을 종료 후 시행했다.
 
 
 
