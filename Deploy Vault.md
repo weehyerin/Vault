@@ -58,6 +58,52 @@ vault server -config=config.hcl
 
 
 
+******
+
+
+## 다시 시작하기 - 새로운 terminal
+1. server 다시 시작
+~~~
+$ vault server -dev
+~~~
+
+2. client 시작
+~~~
+$ export VAULT_ADDR='http://127.0.0.1:8200'
+
+$ export VAULT_DEV_ROOT_TOKEN_ID="s.7Npjx4Ta32VtTFotIDEfPqvS"
+
+$ vault status
+~~~
+
+
+
+client에서 `vault operator unseal` 입력하고, 서버를 실행하면서 알아낸 unseal 입력
+1. <br>
+<img width="542" alt="스크린샷 2019-08-06 오후 3 31 10" src="https://user-images.githubusercontent.com/37536415/62516196-5b057900-b85f-11e9-8f4c-7f280ded7441.png">
+2. <br>
+<img width="439" alt="스크린샷 2019-08-06 오후 3 31 19" src="https://user-images.githubusercontent.com/37536415/62516197-5b057900-b85f-11e9-8808-921c96a62102.png">
+
+
+
+초기화된 모든 Vault 서버는 unsealing(밀봉된) 상태에서 시작한다. 
+
+구성에서 Vault는 실제 저장소에 액세스할 수 있지만 암호를 해독하는 방법을 모르기 때문에 해당 저장소를 읽을 수 없다. 
+
+Vault에서 데이터의 암호를 해독하는 방법을 가르치는 프로세스는 `unsealing` 이다.
+
+Vault의 잠금을 해제하려면 실행 중지 키의 임계값 수가 있어야 한다. 
+
+<img width="650" alt="스크린샷 2019-08-06 오후 3 38 07" src="https://user-images.githubusercontent.com/37536415/62516514-47a6dd80-b860-11e9-985f-f3ef716df46a.png">
+위의 사진에서 Vault의 잠금을 해제하려면 생성된 5개의 키 중 3개가 필요하다.
+
+
+
+
+
+
+
+
 
 
 
