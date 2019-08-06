@@ -169,7 +169,17 @@ vault kv put secret/foo robot=beepboop
 여러 인증 방법을 사용할 수 있는 인증과는 달리 Vault 자체는 단일 정책 권한이다. 
 활성화된 인증 방법은 핵심 정책에 ID를 연결해야 한다.
 
+1. github 파일 생성
+~~~
+vault auth enable -path=github github
+~~~
 
+2. github과 my policy 생성
+~~~
+vault write auth/github/map/teams/default value=my-policy
+~~~
+
+<img width="573" alt="스크린샷 2019-08-06 오후 2 40 46" src="https://user-images.githubusercontent.com/37536415/62513802-32c64c00-b858-11e9-9c86-8208e2753f24.png">
 
 
 
