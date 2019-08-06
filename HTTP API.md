@@ -70,7 +70,15 @@ listener "tcp" {
 ~~~
 여기서 `vault`가 아니라 `test`를 입력
 
-이후 다시 상단의 명령어를 입력함.(아래 사진: 결과)
+~~~
+vault server -config=config.hcl
+~~~
+다시 이 명령어 입력
+
+클라이언트에서도, `export VAULT_ADDR='http://127.0.0.1:8200'` && `export VAULT_DEV_ROOT_TOKEN_ID="s.y6x9FYzCYWfUkBQhINK"` 다시 입력하 시작하기
+
+
+(아래 사진: 결과)
 
 <img width="571" alt="스크린샷 2019-08-06 오후 4 04 04" src="https://user-images.githubusercontent.com/37536415/62518209-fc8ec980-b863-11e9-9f37-3c5347c24128.png">
 
@@ -96,6 +104,93 @@ curl \
 
 
 ## AppRole 인증을 사용하도록 설정하기
+
+1. 
+~~~
+vault auth enable approle
+~~~
+
+결과 : `Success! Enabled approle auth method at: approle/`
+
+2. 
+~~~
+vault write auth/approle/role/my-role \
+>     secret_id_ttl=10m \
+>     token_num_uses=10 \
+>     token_ttl=20m \
+>     token_max_ttl=30m \
+>     secret_id_num_uses=40
+~~~
+결과 : `Success! Data written to: auth/approle/role/my-role`
+
+
+3. 
+~~~
+vault read auth/approle/role/my-role/role-id
+
+vault write -f auth/approle/role/my-role/secret-id
+~~~
+위의 명령어로, role id, secret id를 알아내 수 있음
+
+4. 
+~~~
+vault write auth/approle/login\
+role_id=780cc8ed-85455\
+secret_id=48ecb5da-211b-b9cb-bae850
+~~~
+
+결과 : <img width="630" alt="스크린샷 2019-08-06 오후 4 24 03" src="https://user-images.githubusercontent.com/37536415/62519513-b1c28100-b866-11e9-8984-d3667dfa5c34.png">
+
+
+
+> data key && role_id 가져오기 
+~~~
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+     http://127.0.0.1:8200/v1/auth/approle/role/my-role/role-id | jq
+~~~
+<img width="566" alt="스크린샷 2019-08-06 오후 4 25 13" src="https://user-images.githubusercontent.com/37536415/62519581-d4549a00-b866-11e9-940a-235f7f9d5276.png">
+
+
+
+> my-role 아래에 new secret ID 생성하기
+~~~
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    http://127.0.0.1:8200/v1/auth/approle/role/my-role/secret-id | jq
+~~~
+<img width="572" alt="스크린샷 2019-08-06 오후 4 27 49" src="https://user-images.githubusercontent.com/37536415/62519773-37dec780-b867-11e9-9f37-c8c2c9e24323.png">
+
+>> 이 두 자격 증명은 로그인 엔드포인트에 제공되어 새 Vault 토큰을 가져올 수 있다.
+
+~~~
+curl --request POST   --data '{"role_id": "<상단에서 알아낸 role-id>", "secret_id": "<상단에서 알아낸 secret-id>"}'   http://127.0.0.1:8200/v1/auth/approle/login | jq
+~~~
+
+**상단에서 알아낸 role-id와 secret id입력**
+
+![스크린샷 2019-08-06 오후 4 34 40](https://user-images.githubusercontent.com/37536415/62520236-1c27f100-b868-11e9-85ba-e0efa9b20245.png)
+
+
+> 반환된 클라이언트 토큰을 사용하여 Vault로 인증. 
+
+이 토큰은 정책 기본값, 개발 정책 및 내 정책에 포함되는 모든 리소스에 대한 특정 기능을 사용하여 승인된다.
+
+
+~~~
+export VAULT_TOKEN="<바로 위의 사진에서 알아낸, auth의 client token 값 입력>"
+~~~
+
+
+
+
+
+
+
+
+
+
 
 
 
