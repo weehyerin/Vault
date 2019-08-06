@@ -57,13 +57,45 @@ curl \
 
 <img width="569" alt="스크린샷 2019-08-06 오후 3 53 09" src="https://user-images.githubusercontent.com/37536415/62517414-542c3580-b862-11e9-9119-d16be8696e0c.png">
 
-아마 위의 과정에서 이미 init이 시행된 것 같다. root token을 알아내야 하므로 다시 terminal을 종료 후 시행했다.
+아마 위의 과정에서 이미 init이 시행된 것 같다. root token을 알아내야 하므로 다시 config.hcl 파일부터 시행했다. 
+
+~~~
+backend "file" {
+  path = "vault"
+}
+
+listener "tcp" {
+  tls_disable = 1
+}
+~~~
+여기서 `vault`가 아니라 `test`를 입력
+
+이후 다시 상단의 명령어를 입력함.(아래 사진: 결과)
+
+<img width="571" alt="스크린샷 2019-08-06 오후 4 04 04" src="https://user-images.githubusercontent.com/37536415/62518209-fc8ec980-b863-11e9-9f37-3c5347c24128.png">
+
+~~~
+ export VAULT_TOKEN=<사진에 나온 root token>
+~~~
+
+~~~
+curl \
+    --request POST \
+    --data '{"key": "<keys_base64의 값>"}' \
+    http://127.0.0.1:8200/v1/sys/unseal | jq
+~~~
+
+결과 : <img width="567" alt="스크린샷 2019-08-06 오후 4 10 11" src="https://user-images.githubusercontent.com/37536415/62518530-c140ca80-b864-11e9-8dbb-479628ce2013.png">
+
+
+이제 사용 가능한 모든 인증 방법을 활성화하고 구성할 수 있다. 이 가이드의 목적을 위해 AppRole 인증을 사용하도록 설정하십시오.
+
+
+*****
 
 
 
-
-
-
+## AppRole 인증을 사용하도록 설정하기
 
 
 
