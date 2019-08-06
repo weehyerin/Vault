@@ -86,7 +86,19 @@ vault write aws/roles/my-role credential_type=iam_user policy_document=-<<EOF
 EOF
 ~~~
 
-<img width="569" alt="스크린샷 2019-08-05 오후 5 43 24" src="https://user-images.githubusercontent.com/37536415/62451152-a6108500-b7a8-11e9-93c6-5df5874f3b17.png">
+#### 주의
+~~~
+"Resource": [
+        "<arn의 주소가 들어가야 함.>"
+      ]
+~~~
+    
+> arn의 주소 : 아까 생성한 access key의 arn 주소를 알아내는 법
+<img width="1123" alt="스크린샷 2019-08-06 오전 10 38 38" src="https://user-images.githubusercontent.com/37536415/62505178-6bedc480-b836-11e9-81de-9605ea7c0715.png">
+
+
+결과 : 
+<img width="565" alt="스크린샷 2019-08-06 오전 10 36 55" src="https://user-images.githubusercontent.com/37536415/62505177-6bedc480-b836-11e9-8b19-b56e95f6f22d.png">
 
 
 
@@ -98,8 +110,40 @@ EOF
 이제 AWS 비밀 엔진이 활성화되고 역할이 구성되었으므로
 aws / creds / : name에서 읽음으로써 Vault에 해당 역할에 대한 액세스 키 쌍을 생성하도록 요청할 수 있다.
 
+~~~
+vault read aws/creds/my-role
+~~~
+
+결과 : <img width="478" alt="스크린샷 2019-08-06 오전 10 43 02" src="https://user-images.githubusercontent.com/37536415/62505299-149c2400-b837-11e9-999b-7cb692b2aa05.png">
+
+이제 액세스 및 비밀 키를 사용하여 AWS 내에서 EC2 작업을 수행 할 수 있다. 
+이 키는 새로운 키이며 이전에 입력 한 키가 아니다.
+
+> **aws / creds / : name에서 읽을 때마다 Vault는 AWS에 연결하여 새로운 IAM 사용자 및 키 쌍을 생성**
 
 
+
+********
+
+
+
+## secret 철회
+
+> Vault는 768 시간 후에이 자격 증명을 자동으로 취소
+> 강제 철회 시키 수 있음.
+> 비밀이 철회되면 액세스 키는 더 이상 유효하지 않다.
+
+<img width="478" alt="스크린샷 2019-08-06 오전 10 43 02" src="https://user-images.githubusercontent.com/37536415/62505299-149c2400-b837-11e9-999b-7cb692b2aa05.png">
+
+> **여기서 나타나는 lease_id 값 사용**
+
+~~~
+vault lease revoke aws/creds/my-role/<lease_id 값>
+~~~
+<img width="569" alt="스크린샷 2019-08-06 오전 10 48 20" src="https://user-images.githubusercontent.com/37536415/62505472-c6d3eb80-b837-11e9-97eb-bd11a6f5ac51.png">
+
+#### <<서버측 화면>>
+<img width="566" alt="스크린샷 2019-08-06 오전 10 51 19" src="https://user-images.githubusercontent.com/37536415/62505591-38139e80-b838-11e9-96c4-76b42a88c128.png">
 
 
 
